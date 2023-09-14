@@ -1,15 +1,26 @@
+import { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 
-export default function ButtonCounter(props) {
-  const { count, incrementCount, decrementCount } = props;
+export default function ButtonCounter() {
+  const [count, setCount] = useState(0);
 
   return (
     <View style={styles.container}>
       <View>
-        <TouchableOpacity onPress={incrementCount} style={styles.button}>
+        <TouchableOpacity
+          onPress={() => {
+            setCount(count + 1);
+          }}
+          style={styles.button}
+        >
           <Text style={styles.buttonText}>Add</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={decrementCount} style={styles.button}>
+        <TouchableOpacity
+          onPress={() => {
+            setCount(count - 1);
+          }}
+          style={styles.button}
+        >
           <Text style={styles.buttonText}>Undo</Text>
         </TouchableOpacity>
       </View>

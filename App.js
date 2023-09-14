@@ -1,21 +1,52 @@
+import { useState } from "react";
 import ButtonCounter from "./components/ButtonCounter";
-import React, { useState } from "react";
+import TextDoubler from "./components/TextDoubler";
+import {
+  ScrollView,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Button,
+} from "react-native";
 
 export default function App() {
-  const [count, setCount] = useState(0);
-
-  const incrementCount = () => {
-    setCount(count + 1);
-  };
-  const decrementCount = () => {
-    setCount(count - 1);
+  [componentAmount, setComponentAmount] = useState(1);
+  const incrementComponent = () => {
+    setComponentAmount(componentAmount + 1);
   };
 
+  const decrementComponent = () => {
+    if (componentAmount > 0) {
+      setComponentAmount(componentAmount - 1);
+    }
+  };
   return (
-    <ButtonCounter
-      count={count}
-      incrementCount={incrementCount}
-      decrementCount={decrementCount}
-    />
+    <>
+      <ScrollView>
+        <View>
+          <TouchableOpacity style={{ margin: 50 }}>
+            <Button
+              title={"Add component"}
+              color="green"
+              onPress={incrementComponent}
+            />
+            <Button
+              title={"Delete component"}
+              color="red"
+              onPress={decrementComponent}
+            />
+          </TouchableOpacity>
+        </View>
+        <View>
+          {Array.from({ length: componentAmount }, (_, index) => (
+            <View key={index}>
+              <TextDoubler />
+              <ButtonCounter />
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </>
   );
 }
