@@ -1,52 +1,88 @@
-import { useState } from "react";
-import ButtonCounter from "./components/ButtonCounter";
-import TextDoubler from "./components/TextDoubler";
 import {
   ScrollView,
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
+  AppRegistry,
   Button,
+  FlatList,
 } from "react-native";
+import Organizer from "./components/Organizer";
+import * as colors from "./colors/colors";
+import { useState } from "react";
 
 export default function App() {
-  [componentAmount, setComponentAmount] = useState(1);
-  const incrementComponent = () => {
-    setComponentAmount(componentAmount + 1);
+  [tasksEditing, setTasksEditing] = useState(true);
+  [tasks, setTasks] = useState([]);
+  const addTask = () => {
+    const updatedTasks = [...tasks, "New task..."];
+    setTasks(updatedTasks);
   };
-
-  const decrementComponent = () => {
-    if (componentAmount > 0) {
-      setComponentAmount(componentAmount - 1);
-    }
-  };
+  const renderItem = ({ item }) => (
+    <View style={styles.item}>
+      <Text style={styles.text}>{item}</Text>
+    </View>
+  );
   return (
-    <>
-      <ScrollView>
-        <View>
-          <TouchableOpacity style={{ margin: 50 }}>
-            <Button
-              title={"Add component"}
-              color="green"
-              onPress={incrementComponent}
-            />
-            <Button
-              title={"Delete component"}
-              color="red"
-              onPress={decrementComponent}
-            />
-          </TouchableOpacity>
-        </View>
-        <View>
-          {Array.from({ length: componentAmount }, (_, index) => (
-            <View key={index}>
-              <TextDoubler />
-              <ButtonCounter />
+    <View style={styles.body}>
+      {tasksEditing ? (
+        <ScrollView>
+          <Text style={styles.headingText}>Organizer App</Text>
+          <Button
+            title="Switch task list"
+            color={colors.secondaryColor}
+            onPress={() => setTasksEditing(!tasksEditing)}
+          />
+          <View>
+            <View>
+              <Organizer tasks={tasks} setTasks={setTasks} />
             </View>
-          ))}
+            <Button
+              title="Add task"
+              color={colors.secondaryColor}
+              onPress={addTask}
+            />
+          </View>
+        </ScrollView>
+      ) : (
+        <View>
+          <ScrollView>
+            <Text style={styles.headingText}>Organizer App</Text>
+            <Button
+              title="Switch task list"
+              color={colors.secondaryColor}
+              onPress={() => setTasksEditing(!tasksEditing)}
+            />
+          </ScrollView>
+          <FlatList
+            data={tasks}
+            renderItem={renderItem}
+            keyExtractor={() => {
+              tasks.map((_, index) => index);
+            }}
+            ItemSeparatorComponent={<View style={styles.horizontalLine} />}
+          />
         </View>
-      </ScrollView>
-    </>
+      )}
+    </View>
   );
 }
+const styles = StyleSheet.create({
+  body: {
+    backgroundColor: "beige",
+  },
+  headingText: {
+    textAlign: "center",
+    margin: 40,
+    fontSize: 40,
+    color: colors.primaryTextColor,
+  },
+  horizontalLine: {
+    height: 1,
+    backgroundColor: "gray",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+});
+
+AppRegistry.registerComponent("MyApp", () => App);
