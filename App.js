@@ -1,81 +1,100 @@
-import { AppRegistry, View, StyleSheet, TextInput } from "react-native";
-import FlexContainer from "./HOC/FlexContainer/FlexContainer";
-import ColorInput from "./components/ColorInput/ColorInput";
-import { useState } from "react";
+import React, { useState } from "react";
+import { StyleSheet, AppRegistry, Text } from "react-native";
+import LoginForm from "./components/LoginForm/LoginForm";
+import {
+  NativeBaseProvider,
+  View,
+  extendTheme,
+  Center,
+  Button,
+  PresenceTransition,
+} from "native-base";
+
+const newColorTheme = {};
+const theme = extendTheme({ colors: newColorTheme });
 
 export default function App() {
-  const [red, setRed] = useState(0);
-  const [green, setGreen] = useState(0);
-  const [blue, setBlue] = useState(0);
-  const handleRed = (value) => {
-    const numericValue = value.replace(/[^0-9]/g, "");
-    const parsedValue =
-      numericValue === "" || isNaN(numericValue)
-        ? 0
-        : parseInt(numericValue, 10);
-
-    parsedValue > 255 ? setRed(255) : setRed(parsedValue);
+  const [password, setPassword] = useState("password");
+  const [login, setLogin] = useState("login");
+  const [isCorrect, setIsCorrect] = useState(null);
+  const handleLogin = () => {
+    users.some((val) => val.password == password && val.login == login)
+      ? setIsCorrect(true)
+      : setIsCorrect(false);
   };
-  const handleGreen = (value) => {
-    const numericValue = value.replace(/[^0-9]/g, "");
-    const parsedValue =
-      numericValue === "" || isNaN(numericValue)
-        ? 0
-        : parseInt(numericValue, 10);
-
-    parsedValue > 255 ? setGreen(255) : setGreen(parsedValue);
-  };
-  const handleBlue = (value) => {
-    const numericValue = value.replace(/[^0-9]/g, "");
-    const parsedValue =
-      numericValue === "" || isNaN(numericValue)
-        ? 0
-        : parseInt(numericValue, 10);
-    parsedValue > 255 ? setBlue(255) : setBlue(parsedValue);
-  };
+  const users = [
+    {
+      login: "yaroslav@gmail.com",
+      password: "12345",
+    },
+  ];
   return (
-    <View style={styles.body}>
-      <FlexContainer>
-        <ColorInput red={red} green={green} blue={blue}></ColorInput>
-        <TextInput
-          keyboardType="numeric"
-          style={styles.input}
-          placeholder="R (0-255)"
-          onChangeText={(value) => handleRed(value)}
-          value={red.toString()}
-        />
-        <TextInput
-          keyboardType="numeric"
-          style={styles.input}
-          placeholder="G (0-255)"
-          onChangeText={(value) => handleGreen(value)}
-          value={green.toString()}
-        />
-        <TextInput
-          keyboardType="numeric"
-          style={styles.input}
-          placeholder="B (0-255)"
-          onChangeText={(value) => handleBlue(value)}
-          value={blue.toString()}
-        />
-      </FlexContainer>
-    </View>
+    <NativeBaseProvider>
+      <PresenceTransition
+        visible={isCorrect != null}
+        initial={{
+          translateY: -100, // Move the pop-up above the view
+          opacity: 0,
+        }}
+        animate={{
+          translateY: 0, // Animate it back to its original position
+          opacity: 1,
+          transition: {
+            duration: 250,
+          },
+        }}
+      >
+        <Center
+          bg={!isCorrect ? "red.500" : "green.500"}
+          rounded="md"
+          w="100%"
+          h="75"
+          _text={{
+            color: "white",
+          }}
+          textAlign={"center"}
+        >
+          {!isCorrect
+            ? "Invalid password or email, try again"
+            : "You are authorized"}
+        </Center>
+      </PresenceTransition>
+      <View style={styles.container}>
+        <View style={styles.inputsContainer}>
+          <LoginForm
+            inpData={login}
+            setInpData={setLogin}
+            type={"text"}
+            label="Login"
+            isCorrect={isCorrect}
+          />
+          <LoginForm
+            inpData={password}
+            setInpData={setPassword}
+            type={"password"}
+            label="Password"
+            isCorrect={isCorrect}
+          />
+        </View>
+        <Center style={styles.button}>
+          <Button onPress={() => handleLogin()} width={"100%"}>
+            Login
+          </Button>
+        </Center>
+      </View>
+    </NativeBaseProvider>
   );
 }
 
 AppRegistry.registerComponent("MyApp", () => App);
+
 const styles = StyleSheet.create({
-  body: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  container: {
+    margin: "auto",
+    marginTop: 100,
+    position: "relative",
   },
-  input: {
-    width: 300,
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    padding: 8,
-    marginBottom: 20,
+  inputsContainer: {
+    height: 300,
   },
 });
