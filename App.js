@@ -33,11 +33,11 @@ export default function App() {
       <PresenceTransition
         visible={isCorrect != null}
         initial={{
-          translateY: -100, // Move the pop-up above the view
+          translateY: -100,
           opacity: 0,
         }}
         animate={{
-          translateY: 0, // Animate it back to its original position
+          translateY: 0,
           opacity: 1,
           transition: {
             duration: 250,
