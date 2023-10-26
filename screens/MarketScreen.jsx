@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -6,31 +6,38 @@ import {
   Image,
   Button,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { checkCrypto } from "../store/slices/crypto/cryptoSlice";
+import { checkCrypto, setCryptos } from "../store/slices/crypto/cryptoSlice";
 
 function MarketScreen() {
   const cryptos = useSelector((state) => state.cryptos);
   const dispatch = useDispatch();
   return (
-    <View style={styles.container}>
-      {cryptos.map((item) => (
-        <View style={styles.itemContainer} key={item.id}>
-          <Image source={item.src} style={styles.itemImage} />
-          <View>
-            <Text style={styles.itemName}>{item.name}</Text>
-            <Text style={styles.itemCurrency}>${item.dollarCurrency}</Text>
+    <ScrollView>
+      <View style={styles.container}>
+        {cryptos.map((item) => (
+          <View style={styles.itemContainer} key={item.id}>
+            <Image source={item.src} style={styles.itemImage} />
+            <View>
+              <Text style={styles.itemName}>{item.name}</Text>
+              <Text style={styles.itemCurrency}>${item.dollarCurrency}</Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => dispatch(checkCrypto(item.id))}
+              style={{
+                ...styles.addToCartButton,
+                backgroundColor: item.checked ? "red" : "#3498db",
+              }}
+              disabled={!!item.checked}
+            >
+              <Text style={styles.buttonText}>Add</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            onPress={()=>dispatch(checkCrypto(item.id))}
-            style={styles.addToCartButton}
-          >
-            <Text style={styles.buttonText}>Add</Text>
-          </TouchableOpacity>
-        </View>
-      ))}
-    </View>
+        ))}
+      </View>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({

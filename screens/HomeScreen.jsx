@@ -41,6 +41,7 @@ const HomeScreen = ({ navigation }) => {
             <View style={styles.itemContainer} key={item.id}>
               <Image source={item.src} style={styles.itemImage} />
               <View>
+                <Text>{item.amountToBuy}</Text>
                 <Text style={styles.itemName}>{item.name}</Text>
                 <Text style={styles.itemCurrency}>${item.dollarCurrency}</Text>
               </View>
