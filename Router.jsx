@@ -5,35 +5,11 @@ import { useDispatch } from "react-redux";
 import MarketScreen from "./screens/MarketScreen";
 import { useEffect } from "react";
 import { setCryptos } from "./store/slices/crypto/cryptoSlice";
-import Realm from "realm";
-const CryptoSchema = {
-  name: "Crypto",
-  properties: {
-    amountToBuy: Number,
-    src: Number,
-    name: String,
-    checked: Boolean,
-    dollarCurrency: Number,
-  },
-};
-// class Crypto extends Realm.Object {
-//   static schema = {
-//     name: "Crypto",
-//     properties: {
-//       amountToBuy: "number",
-//       src: "number",
-//       name: "string",
-//       checked: "boolean",
-//       dollarCurrency: "number",
-//     },
-//     primaryKey: "_id",
-//   };
-// }
-// const realm = new Realm({ schema: [CryptoSchema] });
+import { Realm } from "@realm/react";
 const initialState = {
   cryptos: [
     {
-      id:1,
+      id: 1,
       amountToBuy: 0,
       src: require("./img/png/bitcoin.png"),
       name: "Bitcoin",
@@ -41,7 +17,7 @@ const initialState = {
       dollarCurrency: 28500,
     },
     {
-      id:2,
+      id: 2,
       amountToBuy: 0,
       src: require("./img/png/bnb.png"),
       name: "BNB",
@@ -49,7 +25,7 @@ const initialState = {
       dollarCurrency: 211,
     },
     {
-      id:3,
+      id: 3,
       amountToBuy: 0,
       src: require("./img/png/cardano.png"),
       name: "Cardano",
@@ -57,7 +33,7 @@ const initialState = {
       dollarCurrency: 0.24,
     },
     {
-      id:4,
+      id: 4,
       amountToBuy: 0,
       src: require("./img/png/USDcoin.png"),
       name: "USD coin",
@@ -65,7 +41,7 @@ const initialState = {
       dollarCurrency: 0.5,
     },
     {
-      id:5,
+      id: 5,
       amountToBuy: 0,
       src: require("./img/png/ethereum.png"),
       name: "Ethereum",
@@ -73,7 +49,7 @@ const initialState = {
       dollarCurrency: 1558,
     },
     {
-      id:6,
+      id: 6,
       amountToBuy: 0,
       src: require("./img/png/solana.png"),
       name: "Solana",
@@ -81,7 +57,7 @@ const initialState = {
       dollarCurrency: 23.75,
     },
     {
-      id:7,
+      id: 7,
       amountToBuy: 0,
       src: require("./img/png/tether.png"),
       name: "Tether",
@@ -89,7 +65,7 @@ const initialState = {
       dollarCurrency: 1,
     },
     {
-      id:8,
+      id: 8,
       amountToBuy: 0,
       src: require("./img/png/XRP.png"),
       name: "XRP",
@@ -98,21 +74,42 @@ const initialState = {
     },
   ],
 };
+
+class Crypto extends Realm.Object {
+  static schema = {
+    name: "Crypto",
+    primaryKey: "id",
+    properties: {
+      id: "int",
+      amountToBuy: "double",
+      src: "int",
+      name: "string",
+      checked: "bool",
+      dollarCurrency: "double",
+    },
+  };
+}
+
+const realm = new Realm({ schema: [Crypto], schemaVersion: 5 });
+
 function Router() {
   const dispatch = useDispatch();
   useEffect(() => {
     // realm.write(() => {
-    //   realm.create("Crypto", {
-    //     amountToBuy: 0,
-    //     src: require("./img/png/bitcoin.png"),
-    //     name: "Bitcoin",
-    //     checked: true,
-    //     dollarCurrency: 28500,
+    //   realm.deleteAll("Crypto");
+    // });
+    // realm.write(() => {
+    //   initialState.cryptos.forEach((cryptoData) => {
+    //     realm.create("Crypto", cryptoData);
     //   });
     // });
-    // const cars = realm.objects("Car");
-    // console.log(cars);
-    dispatch(setCryptos(initialState.cryptos));
+    const state = realm.objects("Crypto");
+    // console.log(state);
+    // console.log(initialState.cryptos);
+    const arr = JSON.parse(JSON.stringify(state));
+    console.log(arr);
+    dispatch(setCryptos(arr));
+    // realm.close();
   }, []);
   const Stack = createStackNavigator();
   return (
